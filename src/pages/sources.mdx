@@ -2,18 +2,117 @@
 title: Sources
 ---
 
+<style>{`
+  .map-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .map-card {
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--ifm-background-surface-color);
+  }
+  
+  .map-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .map-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .map-card-content {
+    padding: 1rem;
+  }
+  
+  .map-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--ifm-color-primary);
+  }
+  
+  .map-card-year {
+    font-size: 0.9rem;
+    color: var(--ifm-color-emphasis-700);
+    margin: 0;
+  }
+  
+  .map-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+`}</style>
+
 # Sources
 
 ## Maps
 
-- [Carl Walter's Map of the Farmington Canal (2016)](https://simsburyfreelibrary.org/book-store/farmington-canal-maps/)
-- [Carl Walter's Map of the Hampshire & Hampden Canal (2006)](http://www.historic-northampton.org/products/guides/hampshirecanal.html)
-- [Henry Farnam's Map of the Farmington Canal (1828)](https://1828map.farmingtoncanal.info/)
+<div className="map-cards">
+  <a href="https://simsburyfreelibrary.org/book-store/farmington-canal-maps/" target="_blank" rel="noopener noreferrer">
+    <div className="map-card">
+      <img 
+        src="https://images.nhncanal.org/Walter2016-thumb.webp" 
+        alt="Carl Walter's Map of the Farmington Canal" 
+        className="map-card-image"
+      />
+      <div className="map-card-content">
+        <p className="map-card-year">Carl Walter's Map of the Farmington Canal (2016)</p>
+      </div>
+    </div>
+  </a>
+  
+  <a href="http://www.historic-northampton.org/products/guides/hampshirecanal.html" target="_blank" rel="noopener noreferrer">
+    <div className="map-card">
+      <img 
+        src="https://images.nhncanal.org/Walter2006-thumb.webp" 
+        alt="Carl Walter's Map of the Hampshire & Hampden Canal" 
+        className="map-card-image"
+      />
+      <div className="map-card-content">
+        <p className="map-card-year">Carl Walter's Map of the Hampshire & Hampden Canal (2006)</p>
+      </div>
+    </div>
+  </a>
+  
+  <a href="https://1828map.farmingtoncanal.info/" target="_blank" rel="noopener noreferrer">
+    <div className="map-card">
+      <img 
+        src="https://images.nhncanal.org/Farnum1828-thumb.webp" 
+        alt="Henry Farnam's Map of the Farmington Canal" 
+        className="map-card-image"
+      />
+      <div className="map-card-content">
+        <p className="map-card-year">Henry Farnam's Map of the Farmington Canal (1828)</p>
+      </div>
+    </div>
+  </a>
+  
+  <a href="https://docs.farmingtoncanal.info/HHC_SWCA_PVPC_Cultural_Resources_2023-06.pdf" target="_blank" rel="noopener noreferrer">
+    <div className="map-card">
+      <img 
+        src="https://images.nhncanal.org/SWCA2023-thumb.webp" 
+        alt="Archaeological Reconnaissance Survey for the Hampshire & Hampden Canal" 
+        className="map-card-image"
+      />
+      <div className="map-card-content">
+        <p className="map-card-year">Archaeological Reconnaissance Survey for the Hampshire & Hampden Canal (2023) (160MB PDF)</p>
+      </div>
+    </div>
+  </a>
+</div>
 
-## Studies and Data
+##  Data
 
-- [Archaeological Reconnaissance Survey for the Hampshire & Hampden Canal](https://www.swca.com/news/2024/02/retracing-the-past-historic-preservation-of-a-new-england-canalway)
-  - [View Full Report 2023 (160MB PDF)](https://docs.farmingtoncanal.info/HHC_SWCA_PVPC_Cultural_Resources_2023-06.pdf)
 - [Connecticut Lidar Data (2023)](https://maps.cteco.uconn.edu/data/lidar/)
 - [Massachusetts Lidar Data (2021)](https://www.mass.gov/info-details/massgis-data-lidar-terrain-data)
 - [Connecticut Aerial Photography (1934)](https://maps.cteco.uconn.edu/data/historic1934/)
