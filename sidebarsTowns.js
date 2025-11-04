@@ -27,7 +27,6 @@ module.exports = {
         'farmington',
         'avon',
         'simsbury',
-        'east-granby',
         'granby',
         'suffield',
       ],
