@@ -1,0 +1,34 @@
+.heroBanner {
+  padding: 3.5rem 0;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: var(--ifm-heading-color);
+  position: relative;
+}
+
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 0;
+}
+
+.heroBanner .container {
+  position: relative;
+  z-index: 1;
+}
+
+.buttons {
+  margin-top: 1.25rem;
+}
+
+/* local background image reference (served from /img/packet-boat-woodcut.jpg) */
+.bg {
+  background-image: url('/img/packet-boat-woodcut.jpg');
+}
+
+@media (min-width: 768px) {
+  .heroBanner { padding: 5rem 0; }
+}

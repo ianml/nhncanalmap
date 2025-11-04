@@ -38,6 +38,21 @@ module.exports = {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'towns',
+        path: 'docs/towns',
+        routeBasePath: 'towns',
+        sidebarPath: require.resolve('./sidebarsTowns.js'),
+        // keep editUrl undefined for now; adjust if you want editable links
+        showLastUpdateAuthor: false,
+        showLastUpdateTime: false,
+      },
+    ],
+  ],
+
   themeConfig: /** @type {import('@docusaurus/preset-classic').ThemeConfig} */ ({
     colorMode: {
       defaultMode: 'dark',
