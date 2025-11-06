@@ -28,7 +28,6 @@ module.exports = {
         'avon',
         'simsbury',
         'granby',
-        'suffield',
       ],
     },
     {
