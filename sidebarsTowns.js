@@ -37,7 +37,6 @@ module.exports = {
       items: [
         'southwick',
         'westfield',
-        'russell',
         'southampton',
         'easthampton',
         'northampton',
