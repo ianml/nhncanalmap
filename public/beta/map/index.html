@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NH&amp;N Canal LiDAR Map — Beta</title>
+  <meta name="description" content="A read-only MapLibre map of the New Haven and Northampton Canal over LiDAR terrain and slope imagery." />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/pmtiles@4/dist/pmtiles.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      font-family: system-ui, sans-serif;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100dvh;
+    }
+
+    #controls {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.93);
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+      width: 220px;
+      font-size: 13px;
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    #controls h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #374151;
+      margin-bottom: 12px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 10px 0 6px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .btn-row button {
+      flex: 1;
+      padding: 5px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 12px;
+      color: #374151;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-row button.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .slider-row label {
+      font-size: 12px;
+      color: #374151;
+      flex-shrink: 0;
+    }
+
+    .slider-row input[type=range] {
+      flex: 1;
+      accent-color: #2563eb;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .toggle-row label {
+      font-size: 12px;
+      color: #374151;
+    }
+
+    details.advanced {
+      margin-top: 12px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 9px;
+    }
+
+    details.advanced>summary {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    details.advanced>summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.advanced>summary::before {
+      content: "\25B8";
+      font-size: 10px;
+      transition: transform 0.15s;
+    }
+
+    details.advanced[open]>summary::before {
+      transform: rotate(90deg);
+    }
+
+    details.advanced .section-label:first-of-type {
+      margin-top: 9px;
+    }
+
+    #nav-select {
+      width: 100%;
+      margin-top: 6px;
+      padding: 4px 5px;
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      background: #f9fafb;
+      color: #374151;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    #nav-readout {
+      margin-top: 6px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #6b7280;
+      min-height: 15px;
+    }
+
+    #nav-readout b {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    #nav-row {
+      display: flex;
+      gap: 5px;
+      align-items: stretch;
+    }
+
+    #nav-row button {
+      width: 30px;
+      flex: none;
+      padding: 5px 0;
+      border: 1px solid #d1d5db;
+      border-radius: 5px;
+      background: #f9fafb;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      color: #374151;
+    }
+
+    #nav-row button:hover:not(:disabled) {
+      background: #eef2ff;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    #nav-row button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    #nav-row select {
+      flex: 1;
+      margin-top: 0;
+    }
+
+    #nav-block {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 7px;
+      padding: 9px 10px 10px;
+      margin-bottom: 13px;
+    }
+
+    #nav-block .section-label {
+      margin: 0 0 7px;
+      color: #4338ca;
+    }
+
+    #nav-block #nav-select {
+      font-size: 13px;
+      padding: 5px 6px;
+      border-color: #c7d2fe;
+      background: #fff;
+    }
+
+    #nav-block #nav-row button {
+      width: 32px;
+      font-size: 16px;
+      border-color: #c7d2fe;
+      background: #fff;
+    }
+
+    #nav-hint {
+      margin-top: 7px;
+      font-size: 10px;
+      color: #6366f1;
+      line-height: 1.4;
+    }
+
+    #nav-hint kbd {
+      font-family: inherit;
+      font-size: 10px;
+      background: #fff;
+      border: 1px solid #c7d2fe;
+      border-radius: 3px;
+      padding: 0 3px;
+    }
+
+    .legend {
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 0;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .legend-swatch {
+      width: 28px;
+      height: 4px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    #tooltip {
+      position: absolute;
+      bottom: 36px;
+      left: 12px;
+      background: rgba(17, 24, 39, 0.82);
+      color: #f9fafb;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 13px;
+      pointer-events: none;
+      display: none;
+    }
+
+    #lock-card {
+      position: absolute;
+      bottom: 48px;
+      left: 12px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+      width: 240px;
+      font-size: 13px;
+      display: none;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    #lock-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    #lock-card-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    #lock-card-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0 2px;
+    }
+
+    #lock-card-close:hover {
+      color: #111;
+    }
+
+    #lock-card-canal {
+      padding: 6px 12px 2px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    #lock-card-coords {
+      padding: 2px 12px 8px;
+      color: #374151;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #lock-card-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    #lock-card-nav button {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 10px;
+      color: #374151;
+    }
+
+    #lock-card-nav button:hover {
+      background: #e5e7eb;
+    }
+
+    #lock-pager {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    #profile-panel {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      max-width: 1040px;
+      margin: 0 auto;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(17, 24, 39, 0.3);
+      display: none;
+      z-index: 50;
+    }
+
+    #profile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px 8px 14px;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    #profile-close {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      flex: 0 0 auto;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #374151;
+      line-height: 1;
+      padding: 0 0 2px;
+    }
+
+    #profile-close:hover {
+      color: #111827;
+      background: #e5e7eb;
+    }
+
+    #profile-close:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    #profile-canvas {
+      display: block;
+      width: 100%;
+      height: 160px;
+      cursor: pointer;
+    }
+
+    .beta-badge {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 2px 5px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+      font: 700 9px/1 system-ui, sans-serif;
+      letter-spacing: 0.08em;
+      vertical-align: 1px;
+    }
+
+    @media (max-width: 640px) {
+      #controls {
+        top: 8px;
+        right: 8px;
+        width: min(220px, calc(100vw - 62px));
+        max-height: calc(100dvh - 16px);
+        padding: 11px 12px;
+      }
+
+      #profile-canvas {
+        height: 140px;
+      }
+
+      #profile-panel {
+        right: 8px;
+        bottom: 8px;
+        left: 8px;
+      }
+
+      #lock-card {
+        max-width: calc(100vw - 24px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map" role="application" aria-label="Interactive LiDAR map of the New Haven and Northampton Canal"></div>
+
+  <div id="controls">
+    <h3>NH&amp;N Canal — LiDAR <span class="beta-badge">BETA</span></h3>
+
+    <div id="nav-block">
+      <div class="section-label">Go to a lock or place</div>
+      <div id="nav-row">
+        <button id="nav-prev" onclick="stepStop(-1)" title="Previous stop  [">&#8249;</button>
+        <select id="nav-select" onchange="goToStop(+this.value)">
+          <option value="-1">Jump to&hellip;</option>
+        </select>
+        <button id="nav-next" onclick="stepStop(1)" title="Next stop  ]">&#8250;</button>
+      </div>
+      <div id="nav-readout"></div>
+      <div id="nav-hint">Step with <kbd>[</kbd> <kbd>]</kbd> &middot; click the elevation profile to fly there</div>
+    </div>
+
+    <div class="section-label">Overlay</div>
+    <div class="btn-row">
+      <button id="btn-hillshade" onclick="setOverlay('hillshade')">Hillshade</button>
+      <button id="btn-slope" class="active" onclick="setOverlay('slope')">Slope</button>
+    </div>
+
+    <div class="section-label">Layers</div>
+    <div class="toggle-row">
+      <input type="checkbox" id="canal-toggle" checked
+        onchange="map.setLayoutProperty('canals-fill', 'visibility', this.checked ? 'visible' : 'none')" />
+      <label for="canal-toggle">Canal lines (36 ft)</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="locks-toggle" checked
+        onchange="map.setLayoutProperty('locks-icons', 'visibility', this.checked ? 'visible' : 'none')" />
+      <label for="locks-toggle">Lock locations</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="elev-toggle"
+        onchange="map.setLayoutProperty('canal-elev-line', 'visibility', this.checked ? 'visible' : 'none')" />
+      <label for="elev-toggle">Elevation coloring</label>
+    </div>
+
+    <div class="section-label">Analysis</div>
+    <div class="btn-row">
+      <button id="profile-open" aria-controls="profile-panel" aria-expanded="false" onclick="toggleProfile()">Elevation Profile</button>
+    </div>
+    <div class="slider-row">
+      <label>Canal</label>
+      <input type="range" id="canal-opacity" min="0" max="1" step="0.05" value="0.5"
+        oninput="setCanalOpacity(+this.value)" />
+    </div>
+
+    <details class="advanced">
+      <summary>Advanced</summary>
+
+    <div class="section-label">Basemap</div>
+    <div class="btn-row">
+      <button id="btn-base-osm" class="active" onclick="setBasemap('osm')">OSM</button>
+      <button id="btn-base-otm" onclick="setBasemap('otm')">OpenTopo</button>
+      <button id="btn-base-usgs-topo" onclick="setBasemap('usgs-topo')">USGS</button>
+      <button id="btn-base-none" onclick="setBasemap('none')">None</button>
+    </div>
+    <div class="section-label">Basemap Opacity</div>
+    <div class="slider-row">
+      <label>Opacity</label>
+      <input type="range" id="base-opacity" min="0" max="1" step="0.05" value="0.75"
+        oninput="if (activeBasemap !== 'none') map.setPaintProperty(activeBasemap, 'raster-opacity', +this.value)" />
+    </div>
+
+    <div class="section-label">LiDAR Opacity</div>
+    <div class="slider-row">
+      <label>LiDAR</label>
+      <input type="range" id="lidar-opacity" min="0" max="1" step="0.05" value="0.85"
+        oninput="setOverlayOpacity(activeOverlay, +this.value)" />
+    </div>
+
+    <div class="section-label">3D Terrain</div>
+    <div class="slider-row">
+      <label>Exaggeration</label>
+      <input type="range" id="exaggeration" min="1" max="10" step="0.5" value="3"
+        oninput="map.setTerrain({ source: 'terrain-dem', exaggeration: +this.value })" />
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="terrain-toggle"
+        onchange="map.setTerrain(this.checked ? { source: 'terrain-dem', exaggeration: +document.getElementById('exaggeration').value } : null)" />
+      <label for="terrain-toggle">Enable 3D terrain</label>
+    </div>
+
+    </details>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#2563eb"></div>
+        Farmington Canal
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#7c3aed"></div>
+        Hampshire &amp; Hampden Canal
+      </div>
+      <div class="legend-item">
+        <div class="legend-swatch" style="background:#0891b2"></div>
+        Feeders
+      </div>
+      <div class="legend-item">
+        <div style="width:10px;height:10px;border-radius:50%;background:#6b7280;border:1.5px solid #fff;flex-shrink:0">
+        </div>
+        Lock locations
+      </div>
+    </div>
+  </div>
+
+  <div id="tooltip"></div>
+
+  <div id="profile-panel" role="dialog" aria-modal="false" aria-labelledby="profile-title">
+    <div id="profile-header">
+      <span id="profile-title">Elevation Profile — NH&amp;N Canal (86.5 mi)</span>
+      <button id="profile-close" type="button" aria-label="Close elevation profile" onclick="toggleProfile(false)">&#x00D7;</button>
+    </div>
+    <canvas id="profile-canvas"></canvas>
+  </div>
+
+  <div id="lock-card">
+    <div id="lock-card-header">
+      <span id="lock-card-title"></span>
+      <button id="lock-card-close" aria-label="Close">&#x00D7;</button>
+    </div>
+    <div id="lock-card-canal"></div>
+    <div id="lock-card-coords"></div>
+    <div id="lock-card-nav">
+      <button id="lock-prev" onclick="navigateLock(-1)">&#8249;</button>
+      <span id="lock-pager"></span>
+      <button id="lock-next" onclick="navigateLock(+1)">&#8250;</button>
+    </div>
+  </div>
+
+  <noscript>This interactive map requires JavaScript.</noscript>
+
+  <script>
+    // MapLibre reads PMTiles with HTTP range requests, so the viewer transfers
+    // only the tiles currently on screen. The terrain archive is small enough to
+    // ship with the site. Full-resolution overlay archives live in R2 and are
+    // split below Wrangler's per-object upload ceiling without dropping tiles.
+    maplibregl.addProtocol("pmtiles", new pmtiles.Protocol().tile);
+    // Docusaurus may serve index.html as the extensionless `/beta/map` URL.
+    // Normalize that form to a directory before resolving bundled map assets.
+    const MAP_BASE = location.pathname.endsWith("/map")
+      ? `${location.origin}${location.pathname}/`
+      : new URL(".", location.href).href;
+    const mapAsset = name => new URL(name, MAP_BASE).href;
+    const TERRAIN_PMTILES = `pmtiles://${mapAsset("terrain.pmtiles")}`;
+    const OVERLAY_BASE = "https://pub-0df4295df47448e894b223c3574d2516.r2.dev";
+    const OVERLAY_ARCHIVES = {
+      slope: [
+        "slope-z12-17",
+        "slope-z18-west",
+        "slope-z18-west-central",
+        "slope-z18-east-central",
+        "slope-z18-east"
+      ],
+      hillshade: [
+        "hillshade-z12-17",
+        "hillshade-z18-west",
+        "hillshade-z18-west-central",
+        "hillshade-z18-east-central",
+        "hillshade-z18-east"
+      ]
+    };
+    const OVERLAY_SOURCE_IDS = Object.fromEntries(
+      Object.entries(OVERLAY_ARCHIVES).map(([product, archives]) => [
+        product,
+        archives.map(archive => `${product}-${archive.replace(`${product}-`, "")}-source`)
+      ])
+    );
+    const OVERLAY_SOURCES = Object.fromEntries(
+      Object.entries(OVERLAY_ARCHIVES).flatMap(([product, archives]) =>
+        archives.map((archive, index) => [
+          OVERLAY_SOURCE_IDS[product][index],
+          {
+            type: "raster",
+            url: `pmtiles://${OVERLAY_BASE}/${archive}.pmtiles`,
+            tileSize: 256
+          }
+        ])
+      )
+    );
+    const OVERLAY_LAYER_IDS = Object.fromEntries(
+      Object.entries(OVERLAY_SOURCE_IDS).map(([product, sources]) => [
+        product,
+        sources.map(source => source.replace(/-source$/, "-layer"))
+      ])
+    );
+
+    function overlayLayers(product, visible) {
+      return OVERLAY_SOURCE_IDS[product].map((source, index) => ({
+        id: OVERLAY_LAYER_IDS[product][index],
+        type: "raster",
+        source,
+        // The base archive stops before z18; the four regional archives take
+        // over at z18 and overzoom normally beyond it.
+        ...(index === 0 ? { maxzoom: 18 } : { minzoom: 18 }),
+        layout: { visibility: visible ? "visible" : "none" },
+        paint: { "raster-opacity": 0.85 }
+      }));
+    }
+
+    // Width expression: visually prominent at overview zooms, transitions to true
+    // 36 US survey feet (24.8 px) only at z17–z18 where geographic fidelity matters.
+    // z17 ≈ 12.3 px matches actual 36 ft at that scale.
+    // Prism width in screen pixels. The z17->z18 leg doubles, which is exactly
+    // constant ground width (36 US survey feet); the flatter low-zoom legs keep
+    // the line legible when a true-width canal would be sub-pixel.
+    //
+    // A feature's own `prism_width_ft` scales it. The multiplier has to be
+    // applied inside each stop rather than wrapped around the whole thing: a
+    // zoom expression has to be outermost, so ["*", x, ["interpolate", ["zoom"] ...]]
+    // is rejected by the style spec.
+    const PRISM_SCALE = ["/", ["coalesce", ["get", "prism_width_ft"], 36], 36];
+
+    function prismWidth(multiplier = 1, addPixels = 0) {
+      const stop = px => {
+        const scaled = ["*", px * multiplier, PRISM_SCALE];
+        return addPixels ? ["+", scaled, addPixels] : scaled;
+      };
+      return ["interpolate", ["exponential", 2], ["zoom"],
+        10, stop(4),
+        14, stop(7),
+        17, stop(12.3),
+        18, stop(24.8)];
+    }
+
+    const CANAL_PX_WIDTH = prismWidth();
+
+    // Structures cross-fade in as the numbered lock circles fade out, so the
+    // map switches from an index symbol to true-scale geometry as you zoom.
+    // Peak opacity is baked into the stops: a zoom expression has to be the
+    // outermost one, so ["*", 0.75, <interpolate zoom>] is rejected.
+    const structureOpacity = (peak = 1) => [
+      "interpolate", ["linear"], ["zoom"],
+      15.5, 0,
+      16.5, peak
+    ];
+
+    const STRUCTURE_COLOR = [
+      "match", ["get", "kind"],
+      "lock", "#1e3a5f",
+      "basin", "#0f766e",
+      "aqueduct", "#7c2d12",
+      "culvert", "#57534e",
+      "feeder_dam", "#4338ca",
+      "waste_weir", "#7c2d12",
+      "#374151"
+    ];
+
+    const CANAL_COLOR = [
+      "match", ["get", "id"],
+      "Farmington Canal", "#2563eb",
+      "Hampshire & Hampden Canal", "#7c3aed",
+  /* feeders default */         "#0891b2"
+    ];
+
+    const BOUNDS = [[-72.9348, 41.2955], [-72.6343, 42.3436]];
+    // Guide links open on the appropriate section; ordinary map visits retain the full route.
+    const SECTION_BOUNDS = {
+      farmington: [[-72.9349, 41.2954], [-72.7681, 42.0029]],
+      'hampshire-hampden': [[-72.7720, 42.0028], [-72.6342, 42.3436]]
+    };
+    const viewParams = new URLSearchParams(location.search);
+    const section = viewParams.get('canal');
+    const initialBounds = Object.hasOwn(SECTION_BOUNDS, section) ? SECTION_BOUNDS[section] : BOUNDS;
+    const requestedView = (viewParams.get('view') || '').split(',').map(Number);
+    const [viewLat, viewLon, viewZoom] = requestedView;
+    const validView = requestedView.length === 3 && requestedView.every(Number.isFinite)
+      && viewLat >= 41.2 && viewLat <= 42.5 && viewLon >= -73.1 && viewLon <= -72.4
+      && viewZoom >= 8 && viewZoom <= 18;
+    const initialView = validView
+      ? { center: [viewLon, viewLat], zoom: viewZoom }
+      : { bounds: initialBounds, fitBoundsOptions: { padding: 40 } };
+
+    const map = new maplibregl.Map({
+      container: "map",
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            maxzoom: 19,
+            attribution: "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+          },
+          otm: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png"
+            ],
+            tileSize: 256,
+            maxzoom: 17,
+            attribution: "© <a href='https://opentopomap.org'>OpenTopoMap</a> (CC-BY-SA)"
+          },
+          "usgs-topo": {
+            type: "raster",
+            tiles: ["https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}"],
+            tileSize: 256,
+            maxzoom: 16,
+            attribution: "USGS The National Map"
+          },
+          ...OVERLAY_SOURCES,
+          // One DEM archive drives three things: 3D terrain, the hillshade
+          // layer below, and the elevation readout.  Zoom range comes from the
+          // archive header, so it does not have to be repeated here.
+          "terrain-dem": {
+            type: "raster-dem",
+            url: TERRAIN_PMTILES,
+            tileSize: 256,
+            encoding: "mapbox"
+          },
+          canals: {
+            type: "geojson",
+            data: mapAsset("NHandNCanalLines_20251030.geojson")
+          },
+          locks: {
+            type: "geojson",
+            data: mapAsset("locks.geojson")
+          },
+          "canal-elev": {
+            type: "geojson",
+            data: mapAsset("canal_elevation.geojson")
+          },
+          structures: {
+            type: "geojson",
+            data: mapAsset("structures.geojson")
+          }
+        },
+        layers: [
+          {
+            id: "osm",
+            type: "raster",
+            source: "osm",
+            paint: { "raster-opacity": 0.75 }
+          },
+          {
+            id: "otm",
+            type: "raster",
+            source: "otm",
+            layout: { visibility: "none" },
+            paint: { "raster-opacity": 0.25 }
+          },
+          {
+            id: "usgs-topo",
+            type: "raster",
+            source: "usgs-topo",
+            layout: { visibility: "none" },
+            paint: { "raster-opacity": 0.75 }
+          },
+          ...overlayLayers("hillshade", false),
+          ...overlayLayers("slope", true),
+          {
+            id: "canal-elev-line",
+            type: "line",
+            source: "canal-elev",
+            layout: { visibility: "none", "line-cap": "round", "line-join": "round" },
+            paint: {
+              "line-width": CANAL_PX_WIDTH,
+              "line-color": [
+                "interpolate", ["linear"], ["get", "elevation_m"],
+                0, "#313695",
+                15, "#4575b4",
+                30, "#74add1",
+                45, "#abd9e9",
+                55, "#fee090",
+                65, "#fdae61",
+                75, "#f46d43"
+              ],
+              "line-opacity": 0.9
+            }
+          },
+          {
+            id: "canal-berm",
+            type: "line",
+            source: "canals",
+            minzoom: 15,
+            paint: {
+              "line-color": "#8b7355",
+              "line-width": prismWidth(2.2),
+              "line-opacity": ["interpolate", ["linear"], ["zoom"], 15, 0, 16, 0.22],
+              "line-blur": 2
+            },
+            layout: { "line-cap": "round", "line-join": "round" }
+          },
+          {
+            id: "canal-casing",
+            type: "line",
+            source: "canals",
+            paint: {
+              "line-color": "#1e3a5f",
+              "line-width": prismWidth(1, 4),
+              "line-opacity": 0.45
+            },
+            layout: { "line-cap": "round", "line-join": "round" }
+          },
+          {
+            id: "canals-fill",
+            type: "line",
+            source: "canals",
+            paint: {
+              "line-color": CANAL_COLOR,
+              "line-width": CANAL_PX_WIDTH,
+              "line-opacity": 0.5
+            },
+            layout: { "line-cap": "round", "line-join": "round" }
+          },
+          {
+            id: "structures-fill",
+            type: "fill",
+            source: "structures",
+            paint: {
+              "fill-color": STRUCTURE_COLOR,
+              "fill-opacity": structureOpacity(0.75)
+            }
+          },
+          {
+            id: "structures-outline",
+            type: "line",
+            source: "structures",
+            paint: {
+              "line-color": "#f8fafc",
+              "line-width": 1.2,
+              "line-opacity": structureOpacity()
+            }
+          },
+          {
+            id: "locks-icons",
+            type: "symbol",
+            source: "locks",
+            layout: {
+              "icon-image": ["concat", "lock-", ["get", "canal"], "-", ["to-string", ["get", "lock_num"]]],
+              "icon-size": ["interpolate", ["linear"], ["zoom"], 10, 0.55, 14, 0.75, 18, 1.0],
+              "icon-allow-overlap": true,
+              "icon-ignore-placement": true
+            },
+            paint: {
+              // hand over to the true-scale chamber as it fades in
+              "icon-opacity": ["interpolate", ["linear"], ["zoom"], 15.5, 1, 17, 0]
+            }
+          }
+        ]
+      },
+      ...initialView
+    });
+
+    // Register lock circles when the style first asks for them. Doing this in
+    // `load` is too late: MapLibre may render a frame before that event fires.
+    map.on("styleimagemissing", event => {
+      const match = /^lock-(Farmington Canal|Hampshire & Hampden Canal)-(\d+)$/.exec(event.id);
+      if (!match || map.hasImage(event.id)) return;
+      const color = match[1] === "Farmington Canal" ? "#2563eb" : "#7c3aed";
+      map.addImage(event.id, makeLockIcon(+match[2], color));
+    });
+
+    map.addControl(new maplibregl.NavigationControl(), "top-left");
+    map.addControl(new maplibregl.ScaleControl({ unit: "imperial" }), "bottom-right");
+
+    function makeLockIcon(num, color) {
+      const S = 56;
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = S;
+      const ctx = canvas.getContext("2d");
+      const r = S / 2 - 2;
+      ctx.beginPath();
+      ctx.arc(S / 2, S / 2, r, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = `bold ${num >= 10 ? 20 : 24}px system-ui, sans-serif`;
+      ctx.fillText(String(num), S / 2, S / 2 + 1);
+      return ctx.getImageData(0, 0, S, S);
+    }
+
+    map.on("load", () => {
+      // No sky layer here: that layer type is not in MapLibre 4's style spec, so
+      // adding it threw and aborted the rest of this handler -- which is why the
+      // lock icons and the profile pin were sometimes never registered.
+
+      // Marker the elevation profile drives. Created up front so the first
+      // hover cannot arrive before the layer exists.
+      addProfilePinLayer();
+    });
+
+    let activeOverlay = "slope";
+
+    let activeBasemap = "osm";
+    const BASEMAP_LAYERS = ["osm", "otm", "usgs-topo"];
+    const BASEMAPS = ["osm", "otm", "usgs-topo", "none"];
+
+    function setBasemap(id) {
+      const opacity = +document.getElementById("base-opacity").value;
+      BASEMAP_LAYERS.forEach(l =>
+        map.setLayoutProperty(l, "visibility", l === id ? "visible" : "none")
+      );
+      if (id !== "none") map.setPaintProperty(id, "raster-opacity", opacity);
+      activeBasemap = id;
+      BASEMAPS.forEach(b =>
+        document.getElementById("btn-base-" + b).classList.toggle("active", b === id)
+      );
+    }
+
+    function setOverlayOpacity(name, opacity) {
+      (OVERLAY_LAYER_IDS[name] ?? []).forEach(id =>
+        map.setPaintProperty(id, "raster-opacity", opacity)
+      );
+    }
+
+    function setOverlay(name) {
+      const opacity = +document.getElementById("lidar-opacity").value;
+      Object.entries(OVERLAY_LAYER_IDS).forEach(([product, layers]) =>
+        layers.forEach(id =>
+          map.setLayoutProperty(id, "visibility", name === product ? "visible" : "none")
+        )
+      );
+      setOverlayOpacity(name, opacity);
+      document.getElementById("btn-hillshade").classList.toggle("active", name === "hillshade");
+      document.getElementById("btn-slope").classList.toggle("active", name === "slope");
+      activeOverlay = name;
+    }
+
+    const tooltip = document.getElementById("tooltip");
+
+    map.on("mousemove", "canals-fill", e => {
+      map.getCanvas().style.cursor = "crosshair";
+      tooltip.textContent = e.features[0].properties.id ?? "";
+      tooltip.style.display = "block";
+    });
+    map.on("mouseleave", "canals-fill", () => {
+      map.getCanvas().style.cursor = "";
+      tooltip.style.display = "none";
+    });
+
+    map.on("mouseenter", "locks-icons", e => {
+      map.getCanvas().style.cursor = "pointer";
+      tooltip.textContent = e.features[0].properties.name ?? "";
+      tooltip.style.display = "block";
+    });
+    map.on("mouseleave", "locks-icons", () => {
+      map.getCanvas().style.cursor = "";
+      tooltip.style.display = "none";
+    });
+
+    // ── Elevation profile ─────────────────────────────────────────────────────────
+
+    let profileData = null;
+    let profileVisible = false;
+
+    let profileRequest = null;
+
+    // Fetch once and share it: the profile panel draws from it and the
+    // navigator needs the same locks for their along-route distances.
+    function ensureProfile() {
+      if (!profileRequest) {
+        profileRequest = fetch(mapAsset("elevation_profile.json"))
+          .then(r => {
+            if (!r.ok) throw new Error(`elevation_profile.json: ${r.status}`);
+            return r.json();
+          })
+          .then(data => (profileData = data));
+      }
+      return profileRequest;
+    }
+
+    async function loadProfile() {
+      await ensureProfile();
+      drawProfile();
+    }
+
+    function toggleProfile(next = !profileVisible) {
+      profileVisible = next;
+      document.getElementById("profile-panel").style.display = profileVisible ? "block" : "none";
+      const opener = document.getElementById("profile-open");
+      opener.setAttribute("aria-expanded", String(profileVisible));
+      if (profileVisible) {
+        loadProfile();
+        requestAnimationFrame(() => document.getElementById("profile-close").focus());
+      } else {
+        setProfilePin(null);
+        opener.focus();
+      }
+    }
+
+    function drawProfile() {
+      const canvas = document.getElementById("profile-canvas");
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.offsetWidth, H = canvas.offsetHeight;
+      // If the panel has not been laid out yet the canvas is 0 wide, which
+      // would give the plot a negative width and make every hit test miss.
+      // Wait for a frame and try again rather than drawing something broken.
+      if (W < 80 || H < 40) {
+        if (profileVisible) requestAnimationFrame(drawProfile);
+        return;
+      }
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const { samples, locks } = profileData;
+      const PAD = { top: 16, right: 20, bottom: 32, left: 52 };
+      const cw = W - PAD.left - PAD.right;
+      const ch = H - PAD.top - PAD.bottom;
+
+      const maxDist = samples[samples.length - 1].distance_m;
+      const elevs = samples.map(s => s.elevation_m);
+      const minElev = Math.floor(Math.min(...elevs) / 10) * 10;
+      const maxElev = Math.ceil(Math.max(...elevs) / 10) * 10;
+
+      function xPx(dist_m) { return PAD.left + (dist_m / maxDist) * cw; }
+      function yPx(elev_m) { return PAD.top + ch - ((elev_m - minElev) / (maxElev - minElev)) * ch; }
+
+      // Background
+      ctx.fillStyle = "#f9fafb";
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(PAD.left, PAD.top, cw, ch);
+
+      // Canal section color bands (FC = blue tint, HHC = purple tint)
+      const fcEnd = locks.find(l => l.canal === "Hampshire & Hampden Canal")?.distance_m ?? maxDist;
+      ctx.fillStyle = "rgba(37,99,235,0.06)";
+      ctx.fillRect(PAD.left, PAD.top, xPx(fcEnd) - PAD.left, ch);
+      ctx.fillStyle = "rgba(124,58,237,0.06)";
+      ctx.fillRect(xPx(fcEnd), PAD.top, cw - (xPx(fcEnd) - PAD.left), ch);
+
+      // Grid lines (elevation)
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.lineWidth = 1;
+      const step = maxElev - minElev <= 40 ? 10 : maxElev - minElev <= 80 ? 20 : 50;
+      for (let e = minElev; e <= maxElev; e += step) {
+        const y = yPx(e);
+        ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cw, y); ctx.stroke();
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "10px system-ui";
+        ctx.textAlign = "right";
+        ctx.fillText(`${Math.round(e * 3.28084)} ft`, PAD.left - 4, y + 3);
+      }
+
+      // Lock vertical lines
+      for (const lock of locks) {
+        const x = xPx(lock.distance_m);
+        ctx.strokeStyle = lock.canal === "Farmington Canal" ? "rgba(37,99,235,0.45)" : "rgba(124,58,237,0.45)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(x, PAD.top); ctx.lineTo(x, PAD.top + ch); ctx.stroke();
+        ctx.setLineDash([]);
+        // Tick mark at bottom axis
+        ctx.strokeStyle = lock.canal === "Farmington Canal" ? "rgba(37,99,235,0.7)" : "rgba(124,58,237,0.7)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x, PAD.top + ch); ctx.lineTo(x, PAD.top + ch + 5); ctx.stroke();
+      }
+
+      // Distance axis labels (miles)
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "10px system-ui";
+      ctx.textAlign = "center";
+      const totalMi = maxDist * 0.000621371;
+      const miStep = totalMi < 50 ? 10 : 20;
+      for (let mi = 0; mi <= totalMi; mi += miStep) {
+        const x = xPx(mi / 0.000621371);
+        ctx.fillText(`${mi} mi`, x, PAD.top + ch + 16);
+      }
+
+      // Canal label at top
+      ctx.font = "bold 10px system-ui";
+      ctx.fillStyle = "rgba(37,99,235,0.7)";
+      ctx.textAlign = "left";
+      ctx.fillText("Farmington Canal", PAD.left + 4, PAD.top + 11);
+      ctx.fillStyle = "rgba(124,58,237,0.7)";
+      ctx.textAlign = "right";
+      ctx.fillText("Hampshire & Hampden Canal", PAD.left + cw - 4, PAD.top + 11);
+
+      // Elevation profile line — filled area
+      ctx.beginPath();
+      ctx.moveTo(xPx(samples[0].distance_m), yPx(samples[0].elevation_m));
+      for (const s of samples) ctx.lineTo(xPx(s.distance_m), yPx(s.elevation_m));
+      ctx.lineTo(xPx(samples[samples.length - 1].distance_m), PAD.top + ch);
+      ctx.lineTo(PAD.left, PAD.top + ch);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + ch);
+      grad.addColorStop(0, "rgba(16,185,129,0.35)");
+      grad.addColorStop(1, "rgba(16,185,129,0.05)");
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Profile stroke
+      ctx.beginPath();
+      ctx.moveTo(xPx(samples[0].distance_m), yPx(samples[0].elevation_m));
+      for (const s of samples) ctx.lineTo(xPx(s.distance_m), yPx(s.elevation_m));
+      ctx.strokeStyle = "#059669";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Lock dot markers on profile line
+      for (const lock of locks) {
+        if (lock.elevation_m == null) continue;
+        const x = xPx(lock.distance_m);
+        const y = yPx(lock.elevation_m);
+        const fc = lock.canal === "Farmington Canal";
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = fc ? "#2563eb" : "#7c3aed";
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = "#9ca3af";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(PAD.left, PAD.top, cw, ch);
+
+      // Store drawing params for crosshair
+      canvas._profile = { samples, locks, PAD, cw, ch, maxDist, minElev, maxElev, xPx, yPx, W, H };
+    }
+
+    // Hover the profile to mark the spot on the map; click to travel there.
+    function sampleAtClientX(canvas, clientX) {
+      if (!canvas._profile) return null;
+      const { samples, PAD, cw, maxDist } = canvas._profile;
+      const rect = canvas.getBoundingClientRect();
+      const mx = clientX - rect.left;
+      if (mx < PAD.left || mx > PAD.left + cw) return null;
+      const targetDist = ((mx - PAD.left) / cw) * maxDist;
+      return samples.reduce((a, b) =>
+        Math.abs(a.distance_m - targetDist) < Math.abs(b.distance_m - targetDist) ? a : b);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const canvas = document.getElementById("profile-canvas");
+      canvas.title = "Click anywhere on the profile to fly to that point on the canal";
+
+      canvas.addEventListener("mousemove", e => {
+        const closest = sampleAtClientX(canvas, e.clientX);
+        if (!closest) return;
+        const { maxDist } = canvas._profile;
+        // Redraw with crosshair (drawProfile sets up canvas scale already)
+        drawProfile();
+        const { xPx, yPx, PAD: p, ch } = canvas._profile;
+        const ctx2 = canvas.getContext("2d");
+        const x = xPx(closest.distance_m), y = yPx(closest.elevation_m);
+        ctx2.strokeStyle = "#374151"; ctx2.lineWidth = 1; ctx2.setLineDash([4, 3]);
+        ctx2.beginPath(); ctx2.moveTo(x, p.top); ctx2.lineTo(x, p.top + ch); ctx2.stroke();
+        ctx2.setLineDash([]);
+        ctx2.beginPath(); ctx2.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx2.fillStyle = "#059669"; ctx2.fill();
+        ctx2.strokeStyle = "#fff"; ctx2.lineWidth = 1.5; ctx2.stroke();
+        // Label
+        const ft = Math.round(closest.elevation_m * 3.28084);
+        const mi = (closest.distance_m * 0.000621371).toFixed(1);
+        ctx2.font = "11px system-ui"; ctx2.fillStyle = "#111827";
+        ctx2.textAlign = x > xPx(maxDist * 0.75) ? "right" : "left";
+        ctx2.fillText(`${ft} ft  |  ${mi} mi`, x + (x > xPx(maxDist * 0.75) ? -8 : 8), p.top + 14);
+
+        setProfilePin(locationAtDistance(closest.distance_m));
+      });
+
+      canvas.addEventListener("click", e => {
+        const closest = sampleAtClientX(canvas, e.clientX);
+        if (!closest) return;
+        const target = locationAtDistance(closest.distance_m);
+        if (!target) return;
+        setProfilePin(target);
+        map.flyTo({
+          center: target,
+          zoom: Math.max(map.getZoom(), 15.5),
+          // lift the target clear of the profile panel along the bottom
+          offset: [0, -(document.getElementById("profile-panel").offsetHeight / 2)],
+          speed: 1.4,
+          essential: true
+        });
+        const ft = Math.round(closest.elevation_m * 3.28084);
+        const mi = (closest.distance_m * 0.000621371).toFixed(1);
+        document.getElementById("nav-readout").innerHTML =
+          `<b>${mi} mi from New Haven</b><br>on the canal &middot; ${ft} ft ` +
+          `(${closest.elevation_m.toFixed(1)} m)`;
+        document.getElementById("nav-select").value = "-1";
+        stopIdx = -1;
+        updateNavButtons();
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        if (canvas._profile) drawProfile();
+        setProfilePin(null);
+      });
+      window.addEventListener("resize", () => { if (profileVisible && profileData) drawProfile(); });
+    });
+
+    // ── Lock info card ────────────────────────────────────────────────────────────
+
+    // ---- Navigation ---------------------------------------------------
+    // One ordered list of stops running south (New Haven) to north
+    // (Northampton): every lock, plus the places worth being able to reach
+    // without hunting for them. Everything is ordered by distance along the
+    // route, so Prev/Next walks the canal itself rather than jumping between
+    // the two companies' separate lock numbering.
+
+    let stops = [];
+    let stopIdx = -1;
+    let routeIndex = null;
+
+    // Where along the canal is this many metres from New Haven?
+    function locationAtDistance(distance) {
+      if (!routeIndex) return null;
+      const { points, cumulative, scale, total } = routeIndex;
+      const raw = Math.min(Math.max(distance, 0), total) / scale;
+      let lo = 0, hi = cumulative.length - 1;
+      while (lo < hi - 1) {
+        const mid = (lo + hi) >> 1;
+        if (cumulative[mid] <= raw) lo = mid; else hi = mid;
+      }
+      const span = cumulative[hi] - cumulative[lo];
+      const t = span > 0 ? (raw - cumulative[lo]) / span : 0;
+      return [
+        points[lo][0] + (points[hi][0] - points[lo][0]) * t,
+        points[lo][1] + (points[hi][1] - points[lo][1]) * t
+      ];
+    }
+
+    // A dot on the map tracking the cursor on the profile. Normally created by
+    // the map's load handler; created here too in case a hover somehow beats it.
+    function addProfilePinLayer() {
+      if (map.getSource("profile-pin")) return true;
+      if (!map.isStyleLoaded()) return false;
+      map.addSource("profile-pin", {
+        type: "geojson", data: { type: "FeatureCollection", features: [] }
+      });
+      map.addLayer({
+        id: "profile-pin", type: "circle", source: "profile-pin",
+        paint: {
+          "circle-radius": 6,
+          "circle-color": "#059669",
+          "circle-stroke-color": "#ffffff",
+          "circle-stroke-width": 2
+        }
+      });
+      return true;
+    }
+
+    function setProfilePin(coordinates) {
+      if (!addProfilePinLayer()) return;
+      map.getSource("profile-pin").setData(coordinates
+        ? { type: "Feature", geometry: { type: "Point", coordinates } }
+        : { type: "FeatureCollection", features: [] });
+    }
+
+    const asJson = name => fetch(mapAsset(name)).then(r => r.json());
+    const kmToMi = m => m * 0.000621371;
+
+    function haversine(a, b) {
+      const R = 6371000, toRad = d => d * Math.PI / 180;
+      const dLat = toRad(b[1] - a[1]), dLon = toRad(b[0] - a[0]);
+      const s = Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(a[1])) * Math.cos(toRad(b[1])) * Math.sin(dLon / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(s));
+    }
+
+    function mainLine(canalGeoJson) {
+      const order = ["Farmington Canal", "Hampshire & Hampden Canal"];
+      const points = [];
+      for (const name of order) {
+        const f = canalGeoJson.features.find(x => x.properties.id === name);
+        if (!f) continue;
+        const parts = f.geometry.type === "MultiLineString"
+          ? f.geometry.coordinates : [f.geometry.coordinates];
+        for (const part of parts) points.push(...part);
+      }
+      // the file runs south to north; make that explicit rather than assumed
+      if (points.length && points[0][1] > points[points.length - 1][1]) points.reverse();
+      return points;
+    }
+
+    function nearestOnRoute(route, target) {
+      let best = 0, bestD = Infinity;
+      for (let i = 0; i < route.length; i++) {
+        const d = haversine(route[i], target);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      return { index: best, point: route[best], distance: bestD };
+    }
+
+    async function buildStops() {
+      const [profile, canalGeo, locksGeo, pounds, structures] = await Promise.all([
+        ensureProfile(),
+        asJson("NHandNCanalLines_20251030.geojson"),
+        asJson("locks.geojson"),
+        asJson("canal_elevation.geojson"),
+        asJson("structures.geojson").catch(() => ({ features: [] }))
+      ]);
+
+      const route = mainLine(canalGeo);
+      const total = profile.samples[profile.samples.length - 1].distance_m;
+
+      // cumulative distance at each route vertex, so places can be slotted in
+      const cumulative = [0];
+      for (let i = 1; i < route.length; i++) {
+        cumulative.push(cumulative[i - 1] + haversine(route[i - 1], route[i]));
+      }
+      const scale = total / (cumulative[cumulative.length - 1] || 1);
+      const along = i => cumulative[i] * scale;
+      // the profile knows distances but not positions; keep the route so one
+      // can be turned into the other
+      routeIndex = { points: route, cumulative, scale, total };
+
+      const list = [];
+
+      // locks: coordinates from locks.geojson, distance and height from the profile
+      const byName = new Map(locksGeo.features.map(f => [f.properties.name, f]));
+      for (const lock of profile.locks) {
+        const f = byName.get(lock.name);
+        list.push({
+          kind: "lock",
+          name: lock.name,
+          canal: lock.canal,
+          lock_num: lock.lock_num,
+          lon: f ? f.geometry.coordinates[0] : lock.lon,
+          lat: f ? f.geometry.coordinates[1] : lock.lat,
+          distance_m: lock.distance_m,
+          elevation_m: lock.elevation_m,
+          zoom: 16.5
+        });
+      }
+
+      const place = (name, point, distance, zoom, note) => list.push({
+        kind: "place", name, lon: point[0], lat: point[1],
+        distance_m: distance, zoom, note
+      });
+
+      place("New Haven terminus", route[0], 0, 15, "southern end of the line");
+      place("Northampton terminus", route[route.length - 1], total, 15,
+            "northern end of the line");
+
+      // the state line, found on the route rather than assumed to be at a lock
+      let lineIdx = 0, lineGap = Infinity;
+      for (let i = 0; i < route.length; i++) {
+        const gap = Math.abs(route[i][1] - 42.0);
+        if (gap < lineGap) { lineGap = gap; lineIdx = i; }
+      }
+      place("Connecticut – Massachusetts line", route[lineIdx], along(lineIdx), 13,
+            "CT and MA lidar meet here");
+
+      // summit: the highest pound, placed at its midpoint
+      let summit = null;
+      for (const f of pounds.features) {
+        const e = f.properties.elevation_m;
+        if (e != null && (!summit || e > summit.properties.elevation_m)) summit = f;
+      }
+      if (summit) {
+        const cs = summit.geometry.coordinates;
+        const mid = cs[Math.floor(cs.length / 2)];
+        place(`Summit pound — ${Math.round(summit.properties.elevation_ft)} ft`,
+              mid, (summit.properties.distance_start_m + summit.properties.distance_end_m) / 2,
+              14, "highest water on the canal");
+      }
+
+      // feeder junctions: whichever end of each feeder meets the main line
+      for (const f of canalGeo.features) {
+        const id = f.properties.id;
+        if (!/Feeder/i.test(id)) continue;
+        const parts = f.geometry.type === "MultiLineString"
+          ? f.geometry.coordinates : [f.geometry.coordinates];
+        const flat = parts.flat();
+        const ends = [flat[0], flat[flat.length - 1]];
+        const hits = ends.map(p => nearestOnRoute(route, p));
+        const which = hits[0].distance <= hits[1].distance ? 0 : 1;
+        place(`${id} junction`, ends[which], along(hits[which].index), 15,
+              "feeder meets the main line");
+      }
+
+      // named structures other than locks -- basins, aqueducts and the like.
+      // Locks are already stops; these arrive as soon as any are authored.
+      for (const f of structures.features || []) {
+        const p = f.properties || {};
+        if (p.kind === "lock" || !p.name) continue;
+        const ring = (f.geometry && f.geometry.coordinates && f.geometry.coordinates[0]) || [];
+        if (!ring.length) continue;
+        const corners = ring.slice(0, -1);
+        const centre = [
+          corners.reduce((t, c) => t + c[0], 0) / corners.length,
+          corners.reduce((t, c) => t + c[1], 0) / corners.length
+        ];
+        const hit = nearestOnRoute(route, centre);
+        place(p.name, centre, along(hit.index), 16,
+              p.kind.replace(/_/g, " "));
+      }
+
+      list.sort((a, b) => a.distance_m - b.distance_m);
+      stops = list;
+      fillStopSelect();
+    }
+
+    function fillStopSelect() {
+      const select = document.getElementById("nav-select");
+      select.innerHTML = '<option value="-1">Jump to&hellip;</option>';
+      const groups = [
+        ["Notable places", s => s.kind === "place"],
+        ["Farmington Canal", s => s.kind === "lock" && s.canal === "Farmington Canal"],
+        ["Hampshire & Hampden Canal",
+         s => s.kind === "lock" && s.canal === "Hampshire & Hampden Canal"]
+      ];
+      for (const [label, test] of groups) {
+        const matching = stops.map((s, i) => [s, i]).filter(([s]) => test(s));
+        if (!matching.length) continue;
+        const group = document.createElement("optgroup");
+        group.label = label;
+        for (const [s, i] of matching) {
+          const option = document.createElement("option");
+          option.value = i;
+          option.textContent = s.elevation_m != null
+            ? `${s.name} — ${Math.round(s.elevation_m * 3.28084)} ft`
+            : s.name;
+          group.appendChild(option);
+        }
+        select.appendChild(group);
+      }
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      document.getElementById("nav-prev").disabled = !stops.length || stopIdx === 0;
+      document.getElementById("nav-next").disabled =
+        !stops.length || (stopIdx >= 0 && stopIdx === stops.length - 1);
+    }
+
+    function goToStop(index, fly = true) {
+      if (index < 0 || index >= stops.length) return;
+      stopIdx = index;
+      const s = stops[index];
+      if (fly) {
+        map.flyTo({ center: [s.lon, s.lat], zoom: s.zoom, speed: 1.4, essential: true });
+      }
+      document.getElementById("nav-select").value = String(index);
+
+      const miles = `${kmToMi(s.distance_m).toFixed(1)} mi from New Haven`;
+      const height = s.elevation_m != null
+        ? ` &middot; ${Math.round(s.elevation_m * 3.28084)} ft (${s.elevation_m.toFixed(1)} m)`
+        : "";
+      document.getElementById("nav-readout").innerHTML =
+        `<b>${s.name}</b><br>${s.note ? s.note + " &middot; " : ""}${miles}${height}`;
+
+      if (s.kind === "lock") showLockCard(index);
+      else document.getElementById("lock-card").style.display = "none";
+      updateNavButtons();
+    }
+
+    // The prism is three stacked lines; fade them together so the slider
+    // controls the canal rather than just its water fill.
+    function setCanalOpacity(value) {
+      map.setPaintProperty("canals-fill", "line-opacity", value);
+      map.setPaintProperty("canal-casing", "line-opacity", value * 0.9);
+      map.setPaintProperty("canal-berm", "line-opacity",
+        ["interpolate", ["linear"], ["zoom"], 15, 0, 16, value * 0.44]);
+    }
+
+    function stepStop(delta) {
+      if (!stops.length) return;
+      const next = stopIdx < 0
+        ? (delta > 0 ? 0 : stops.length - 1)
+        : Math.min(stops.length - 1, Math.max(0, stopIdx + delta));
+      goToStop(next);
+    }
+
+    function showLockCard(index) {
+      const s = stops[index];
+      const locks = stops.filter(x => x.kind === "lock");
+      const position = locks.indexOf(s) + 1;
+      document.getElementById("lock-card-title").textContent = s.name;
+      document.getElementById("lock-card-canal").textContent =
+        s.canal + (s.elevation_m != null
+          ? ` · ${Math.round(s.elevation_m * 3.28084)} ft` : "");
+      document.getElementById("lock-card-coords").textContent =
+        `${Math.abs(s.lat).toFixed(5)}° N,  ${Math.abs(s.lon).toFixed(5)}° W`;
+      document.getElementById("lock-pager").textContent = `${position} / ${locks.length}`;
+      document.getElementById("lock-card").style.display = "block";
+    }
+
+    // the card's arrows walk locks only; the panel's arrows walk every stop
+    function navigateLock(delta) {
+      const locks = stops.map((s, i) => [s, i]).filter(([s]) => s.kind === "lock");
+      const here = locks.findIndex(([, i]) => i === stopIdx);
+      const next = Math.min(locks.length - 1, Math.max(0, (here < 0 ? 0 : here + delta)));
+      goToStop(locks[next][1]);
+    }
+
+    map.on("click", "locks-icons", e => {
+      const p = e.features[0].properties;
+      const index = stops.findIndex(s => s.kind === "lock" && s.name === p.name);
+      if (index >= 0) goToStop(index, false);
+      map.flyTo({ center: e.features[0].geometry.coordinates, zoom: Math.max(map.getZoom(), 16.5), speed: 1.2 });
+    });
+
+    document.getElementById("lock-card-close").onclick = () => {
+      document.getElementById("lock-card").style.display = "none";
+    };
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && profileVisible) {
+        e.preventDefault();
+        toggleProfile(false);
+        return;
+      }
+      // e.target is not always an Element (it can be `document`), so guard
+      // before asking it whether it is a form field.
+      const target = e.target;
+      if (target instanceof Element && target.matches("input, select, textarea")) return;
+      if (e.key === "[") { e.preventDefault(); stepStop(-1); }
+      if (e.key === "]") { e.preventDefault(); stepStop(1); }
+    });
+
+    buildStops().catch(err => {
+      document.getElementById("nav-readout").textContent = "Navigation unavailable: " + err.message;
+    });
+  </script>
+</body>
+
+</html>

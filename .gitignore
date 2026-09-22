@@ -5,6 +5,7 @@ node_modules
 build/
 .docusaurus/
 .cache/
+__pycache__/
 
 # Cloudflare
 .wrangler/
@@ -31,3 +32,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+# Astro and local migration backups
+dist/
+dist-github/
+.astro/
+.migration-backup/

@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import MapEmbed from '../components/MapEmbed.astro';
+---
+<BaseLayout title="Lidar Map Beta" description="Explore a beta MapLibre map of the New Haven and Northampton Canal with Lidar terrain and slope imagery." wide>
+  <div class="prose intro">
+    <p class="eyebrow">Explore the terrain</p>
+    <h1>Lidar Map Beta</h1>
+    <aside class="callout caution"><strong>Beta.</strong> This experimental map is undergoing active development and may be broken.</aside>
+    <p>This is a self-contained map that instead of depending on state-provided Lidar imagery (see the <a href="/">main ArcGIS map</a>), generates custom Lidar-based slope and hillshade images around the canal from DEM (digital elevation model) files offered by <a href="https://maps.cteco.uconn.edu/data/lidar/">CT ECO</a> and <a href="https://www.mass.gov/info-details/massgis-data-lidar-terrain-data">MassGIS</a>.</p>
+    <p>Use the controls to switch between slope (color shaded) and hillshade, adjust layer opacity, explore locks and other notable places. View and navigate via the canal elevation profile generated from the DEM files along the canal line.</p>
+    <p><a class="button-link" href="/beta/map/index.html" target="_blank" rel="noopener noreferrer">Open the full screen map <span aria-hidden="true">↗</span></a></p>
+  </div>
+  <MapEmbed />
+</BaseLayout>

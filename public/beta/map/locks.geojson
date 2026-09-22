@@ -1,0 +1,905 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7776686,
+          41.9467312
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 1",
+        "canal": "Farmington Canal",
+        "lock_num": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7778241,
+          41.9462404
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 2",
+        "canal": "Farmington Canal",
+        "lock_num": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7780494,
+          41.945626
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 3",
+        "canal": "Farmington Canal",
+        "lock_num": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7783606,
+          41.9447003
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 4",
+        "canal": "Farmington Canal",
+        "lock_num": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.778546,
+          41.94409
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 5",
+        "canal": "Farmington Canal",
+        "lock_num": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7785253,
+          41.9436685
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 6",
+        "canal": "Farmington Canal",
+        "lock_num": 6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9040184,
+          41.6029346
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 7",
+        "canal": "Farmington Canal",
+        "lock_num": 7
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9032126,
+          41.5906915
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 8",
+        "canal": "Farmington Canal",
+        "lock_num": 8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9030604,
+          41.5655564
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 9",
+        "canal": "Farmington Canal",
+        "lock_num": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9143102,
+          41.5030032
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 10",
+        "canal": "Farmington Canal",
+        "lock_num": 10
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9143422,
+          41.4993519
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 11",
+        "canal": "Farmington Canal",
+        "lock_num": 11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9236477,
+          41.4753167
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 12",
+        "canal": "Farmington Canal",
+        "lock_num": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.917805,
+          41.458347
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 13",
+        "canal": "Farmington Canal",
+        "lock_num": 13
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9092877,
+          41.4357473
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 14",
+        "canal": "Farmington Canal",
+        "lock_num": 14
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9087784,
+          41.429982
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 15",
+        "canal": "Farmington Canal",
+        "lock_num": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9012668,
+          41.410667
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 16",
+        "canal": "Farmington Canal",
+        "lock_num": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.8977217,
+          41.3976168
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 17",
+        "canal": "Farmington Canal",
+        "lock_num": 17
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9002732,
+          41.388378
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 18",
+        "canal": "Farmington Canal",
+        "lock_num": 18
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9197338,
+          41.3689162
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 19",
+        "canal": "Farmington Canal",
+        "lock_num": 19
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9268719,
+          41.3565383
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 20",
+        "canal": "Farmington Canal",
+        "lock_num": 20
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9331566,
+          41.3453608
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 21",
+        "canal": "Farmington Canal",
+        "lock_num": 21
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.932939,
+          41.3288223
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 22",
+        "canal": "Farmington Canal",
+        "lock_num": 22
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9306108,
+          41.3235329
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 23",
+        "canal": "Farmington Canal",
+        "lock_num": 23
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9299403,
+          41.3220262
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 24",
+        "canal": "Farmington Canal",
+        "lock_num": 24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9268803,
+          41.3155402
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 25",
+        "canal": "Farmington Canal",
+        "lock_num": 25
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9226815,
+          41.3116945
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 26",
+        "canal": "Farmington Canal",
+        "lock_num": 26
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9204496,
+          41.3086362
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 27",
+        "canal": "Farmington Canal",
+        "lock_num": 27
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.9228636,
+          41.3036797
+        ]
+      },
+      "properties": {
+        "name": "FC Lock 28",
+        "canal": "Farmington Canal",
+        "lock_num": 28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7550872,
+          42.0484355
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 1",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 1
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7539339,
+          42.0495256
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 2",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 2
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7527305,
+          42.0497903
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 3",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 3
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.751722,
+          42.0499656
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 4",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 4
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7505178,
+          42.0501164
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 5",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.748769,
+          42.050921
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 6",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 6
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.745371,
+          42.0543242
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 7",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 7
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7274769,
+          42.0825246
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 8",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 8
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7264733,
+          42.0863739
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 9",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 9
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7427273,
+          42.1425482
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 10",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 10
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7380948,
+          42.1443322
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 11",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 11
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7376144,
+          42.1477854
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 12",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 12
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7393954,
+          42.1504262
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 13",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 13
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7400606,
+          42.1512694
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 14",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 14
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7409725,
+          42.1521125
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 15",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 15
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7429237,
+          42.1530982
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 16",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 16
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.744157,
+          42.153943
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 17",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 17
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7448508,
+          42.1558097
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 18",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 18
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.734457,
+          42.212671
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 19",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 19
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7322793,
+          42.214461
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 20",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 20
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7315226,
+          42.215173
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 21",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 21
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.730525,
+          42.216018
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 22",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 22
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7090068,
+          42.2427005
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 23",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 23
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.7112797,
+          42.2510814
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 24",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 24
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6988837,
+          42.2633495
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 25",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 25
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6985818,
+          42.2642037
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 26",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 26
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6982116,
+          42.2656369
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 27",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 27
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6365766,
+          42.3389599
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 28",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 28
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6361862,
+          42.3399398
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 29",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 29
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6357832,
+          42.3409433
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 30",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 30
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6353588,
+          42.3420351
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 31",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 31
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -72.6350262,
+          42.3428797
+        ]
+      },
+      "properties": {
+        "name": "HHC Lock 32",
+        "canal": "Hampshire & Hampden Canal",
+        "lock_num": 32
+      }
+    }
+  ]
+}

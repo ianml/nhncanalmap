@@ -1,0 +1,200 @@
+<dialog id="site-search" aria-label="Search pages and PDFs">
+  <div class="search-bar">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
+    <form id="search-form" role="search">
+      <input id="search-query" type="search" aria-label="Search pages and PDFs" placeholder="Search pages and PDFs…" autocomplete="off" maxlength="200" />
+    </form>
+    <form method="dialog"><button class="search-close" aria-label="Close search" title="Close search (Escape)">×</button></form>
+  </div>
+  <div class="search-body">
+    <p id="search-status" role="status" aria-live="polite"></p>
+    <ul id="search-results" aria-label="Search results"></ul>
+    <button id="search-more" type="button" hidden>More results</button>
+  </div>
+  <a class="search-sources" href="/sources">Browse sources</a>
+</dialog>
+<script>
+  import { sitePath } from '../lib/site';
+  interface ResultData { url: string; excerpt: string; meta: Record<string, string> }
+  interface Result { data: () => Promise<ResultData> }
+  interface SearchAPI { search: (query: string) => Promise<{ results: Result[] }> }
+  const dialog = document.querySelector<HTMLDialogElement>('#site-search')!;
+  const input = document.querySelector<HTMLInputElement>('#search-query')!;
+  const status = document.querySelector<HTMLElement>('#search-status')!;
+  const results = document.querySelector<HTMLUListElement>('#search-results')!;
+  const more = document.querySelector<HTMLButtonElement>('#search-more')!;
+  const form = document.querySelector<HTMLFormElement>('#search-form')!;
+  const body = document.querySelector<HTMLElement>('.search-body')!;
+  let revision = 0;
+  let timer: ReturnType<typeof setTimeout>;
+  let opener: HTMLElement | null = null;
+  let loading: Promise<SearchAPI> | undefined;
+  let matches: Result[] = [];
+  let shown = 0;
+
+  function loadSearch() {
+    if (!loading) {
+      const modulePath = sitePath('/pagefind/pagefind.js');
+      loading = import(/* @vite-ignore */ modulePath).then(async engine => {
+        // Indexed URLs already contain the deployment base.
+        await engine.options({ baseUrl: '/' });
+        return engine;
+      }).catch(error => { loading = undefined; throw error; });
+    }
+    return loading;
+  }
+
+  function element<K extends keyof HTMLElementTagNameMap>(tag: K, text?: string, className?: string) {
+    const el = document.createElement(tag);
+    if (text) el.textContent = text;
+    if (className) el.className = className;
+    return el;
+  }
+
+  function resultItem(data: ResultData) {
+    const item = element('li', undefined, 'search-result');
+    const link = element('a');
+    const url = new URL(data.url, location.origin);
+    if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Invalid search result URL');
+    link.href = url.href;
+    link.append(element('span', data.meta.title, 'search-result-title'));
+    if (data.meta.document) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.append(element('span', `PDF · p. ${data.meta.page} ↗`, 'search-result-type'));
+      link.setAttribute('aria-label', `${data.meta.title}, PDF page ${data.meta.page} (opens in a new tab)`);
+    }
+    const excerpt = element('p');
+    // Only preserve Pagefind's highlight markers. PDF text never becomes executable HTML.
+    const parsed = new DOMParser().parseFromString(data.excerpt, 'text/html');
+    function appendSafe(node: Node, target: Node) {
+      if (node.nodeType === Node.TEXT_NODE) target.appendChild(document.createTextNode(node.textContent ?? ''));
+      else if (node instanceof Element && node.tagName === 'MARK') target.appendChild(element('mark', node.textContent ?? ''));
+      else node.childNodes.forEach(child => appendSafe(child, target));
+    }
+    parsed.body.childNodes.forEach(node => appendSafe(node, excerpt));
+    item.append(link, excerpt);
+    return item;
+  }
+
+  async function appendBatch(token: number) {
+    more.disabled = true;
+    const data = await Promise.all(matches.slice(shown, shown + 8).map(match => match.data()));
+    if (token !== revision) return;
+    const items = data.map(resultItem);
+    const expanding = shown > 0;
+    results.append(...items);
+    shown += items.length;
+    more.hidden = shown >= matches.length;
+    more.textContent = 'More results';
+    more.disabled = false;
+    if (expanding) items[0]?.querySelector('a')?.focus();
+  }
+
+  async function search(token: number) {
+    const query = input.value.trim();
+    results.replaceChildren();
+    more.hidden = true;
+    matches = [];
+    shown = 0;
+    body.scrollTop = 0;
+    if (!query) { status.textContent = ''; results.removeAttribute('aria-busy'); return; }
+    status.textContent = 'Searching…';
+    results.setAttribute('aria-busy', 'true');
+    try {
+      const engine = await loadSearch();
+      if (token !== revision) return;
+      const response = await engine.search(query);
+      if (token !== revision) return;
+      matches = response.results;
+      await appendBatch(token);
+      if (token !== revision) return;
+      status.textContent = matches.length ? `${matches.length} ${matches.length === 1 ? 'match' : 'matches'}` : 'No matches. Try different words.';
+    } catch {
+      if (token === revision) status.textContent = 'Search unavailable. Try again or browse sources.';
+    } finally {
+      if (token === revision) results.removeAttribute('aria-busy');
+    }
+  }
+
+  more.addEventListener('click', async () => {
+    const token = revision;
+    try { await appendBatch(token); }
+    catch {
+      if (token !== revision) return;
+      more.disabled = false;
+      more.textContent = 'Retry loading results';
+    }
+  });
+  function schedule(immediate = false) {
+    clearTimeout(timer);
+    const token = ++revision;
+    // Prevent paging through the old query during the debounce interval.
+    more.hidden = true;
+    if (immediate) void search(token);
+    else timer = setTimeout(() => void search(token), 220);
+  }
+  input.addEventListener('input', () => schedule());
+  form.addEventListener('submit', event => { event.preventDefault(); schedule(true); });
+  function open(button?: HTMLElement) {
+    opener = button ?? (document.activeElement as HTMLElement);
+    dialog.showModal();
+    input.focus();
+    if (input.value.trim()) schedule(true);
+  }
+  document.querySelectorAll<HTMLElement>('[data-open-search]').forEach(button => {
+    button.hidden = false;
+    button.addEventListener('click', () => open(button));
+  });
+  dialog.addEventListener('close', () => {
+    clearTimeout(timer); ++revision;
+    opener?.focus();
+  });
+  dialog.addEventListener('keydown', event => {
+    // Search inputs can consume Escape before the native dialog handles it.
+    if (event.key === 'Escape') {
+      event.preventDefault(); event.stopPropagation(); dialog.close();
+    }
+  });
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  });
+  document.addEventListener('keydown', event => {
+    const target = event.target as HTMLElement;
+    if (dialog.open || target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    if ((event.key === 'k' && (event.metaKey || event.ctrlKey)) || (event.key === '/' && !event.metaKey && !event.ctrlKey && !event.altKey)) {
+      event.preventDefault(); open();
+    }
+  });
+</script>
+<style>
+  dialog { width: min(640px, calc(100vw - 2rem)); max-height: 80dvh; margin: 10dvh auto auto; padding: 0; border: 1px solid var(--border); border-radius: 8px; color: var(--text); background: var(--bg); box-shadow: 0 15px 70px #0004; overflow: hidden; }
+  dialog[open] { display: flex; flex-direction: column; }
+  dialog::backdrop { background: #101b17a8; }
+  .search-bar { display: flex; flex-shrink: 0; align-items: center; gap: .65rem; padding: .75rem 1rem; }
+  .search-bar > svg { flex-shrink: 0; color: var(--muted); }
+  #search-form { flex: 1; min-width: 0; }
+  #search-query { display: block; width: 100%; min-width: 0; border: 0; border-radius: 3px; padding: .5rem .15rem; background: transparent; color: var(--text); font: inherit; font-size: 1rem; }
+  #search-query::placeholder { color: var(--muted); opacity: 1; }
+  #search-query:focus-visible { outline-offset: 2px; outline-width: 2px; }
+  .search-close { display: block; width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; color: var(--muted); font-size: 1.6rem; line-height: 1; }
+  .search-close:hover { background: var(--surface); }
+  .search-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 0 1.25rem; }
+  #search-status { font-size: .8rem; color: var(--muted); margin: 0 0 .5rem; }
+  #search-status:empty { display: none; }
+  #search-results { list-style: none; padding: 0; margin: 0; }
+  #search-results :global(.search-result) { margin: 0; padding: .85rem 0; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+  #search-results :global(.search-result > a) { display: block; font-size: .95rem; text-decoration: none; line-height: 1.4; }
+  #search-results :global(.search-result-title) { font-weight: 600; }
+  #search-results :global(a:hover .search-result-title) { text-decoration: underline; }
+  #search-results :global(.search-result-type) { display: inline-block; margin-left: .5rem; color: var(--muted); font-size: .75rem; white-space: nowrap; }
+  #search-results :global(.search-result p) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: .3rem 0 0; color: var(--muted); font-size: .85rem; line-height: 1.5; }
+  #search-results :global(mark) { background: transparent; color: var(--text); font-weight: 650; }
+  #search-more { display: block; margin: .4rem 0 1rem; padding: .4rem 0; border: 0; background: transparent; color: var(--accent); font-size: .85rem; text-decoration: underline; text-underline-offset: .2em; }
+  #search-more[hidden] { display: none; }
+  .search-sources { flex-shrink: 0; padding: .6rem 1.25rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .75rem; text-decoration: none; }
+  .search-sources:hover { color: var(--accent); text-decoration: underline; }
+  @media (max-width: 480px) { dialog { width: calc(100vw - 1rem); margin-top: 2dvh; max-height: 92dvh; } .search-bar { padding: .6rem .75rem; gap: .4rem; } .search-body { padding-inline: 1rem; } }
+</style>

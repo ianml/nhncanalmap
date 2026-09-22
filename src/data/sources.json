@@ -1,0 +1,171 @@
+[
+  {
+    "id": "swca-2023",
+    "section": "maps",
+    "title": "Archaeological Reconnaissance Survey for the Hampshire & Hampden Canal",
+    "author": "SWCA Environmental Consultants / PVPC",
+    "year": "2023",
+    "canals": [
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/HHC_SWCA_PVPC_Cultural_Resources_2023-06.pdf",
+    "pdf": false,
+    "size": "160 MB",
+    "image": "/img/maps/SWCA2023-thumb.webp"
+  },
+  {
+    "id": "raber-2002",
+    "section": "reading",
+    "title": "Survey and Inventory of the Hampshire & Hampden Canal (New Haven and Northampton Canal)",
+    "author": "M. S. Raber",
+    "year": "2002",
+    "canals": [
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/HampshireHampdenCanal-Raber2002.pdf",
+    "pdf": false
+  },
+  {
+    "id": "camposeo-1977",
+    "section": "reading",
+    "title": "The History of the Canal System between New Haven and Northampton (1822\u20131847)",
+    "author": "J. M. Camposeo",
+    "year": "1977",
+    "publication": "Historical Journal of Western Massachusetts",
+    "canals": [
+      "Farmington Canal",
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/Camposeo_Canal_History_1977.pdf",
+    "pdf": false
+  },
+  {
+    "id": "mcmahon-traffic",
+    "section": "reading",
+    "title": "Canal Traffic",
+    "author": "F. B. McMahon",
+    "year": "1950s",
+    "canals": [
+      "Farmington Canal",
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/McMahon_Canal_Traffic.pdf",
+    "pdf": false
+  },
+  {
+    "id": "wpa-1941",
+    "section": "reading",
+    "title": "Boats Across New England Hills: The Story of the Farmington Canal",
+    "author": "Connecticut WPA Writers\u2019 Project",
+    "year": "1941",
+    "canals": [
+      "Farmington Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/WPA_Farmington_Canal_1941.pdf",
+    "pdf": true
+  },
+  {
+    "id": "harte-1938",
+    "section": "reading",
+    "title": "Connecticut\u2019s Canals",
+    "author": "C. R. Harte",
+    "year": "1938",
+    "note": "excerpt",
+    "canals": [
+      "Farmington Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/Harte_Connecticut_Canals_1938pps28-35.pdf",
+    "pdf": true
+  },
+  {
+    "id": "harte-1933",
+    "section": "reading",
+    "title": "Some Engineering Features of the Old Northampton Canal",
+    "author": "C. R. Harte",
+    "year": "1933",
+    "canals": [
+      "Farmington Canal",
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/Harte_Northampton_Canal_1933.pdf",
+    "pdf": true
+  },
+  {
+    "id": "gay-1929",
+    "section": "reading",
+    "title": "Farmington Papers",
+    "author": "J. Gay",
+    "year": "1929",
+    "note": "excerpt",
+    "canals": [
+      "Farmington Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/Farmington_Papers-Canal.pdf",
+    "pdf": true
+  },
+  {
+    "id": "farnam-1889",
+    "section": "reading",
+    "title": "Henry Farnam",
+    "author": "H. W. Farnam",
+    "year": "1889",
+    "canals": [
+      "Farmington Canal",
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://docs.farmingtoncanal.info/henryfarnam01farn.pdf",
+    "pdf": true
+  },
+  {
+    "id": "account-1850",
+    "section": "reading",
+    "title": "An Account of the Farmington Canal Company: Of the Hampshire & Hampden Canal Company; and of the New Haven and Northampton Company, Till the Suspension of Its Canals in 1847",
+    "author": "",
+    "year": "1850",
+    "canals": [
+      "Farmington Canal",
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "https://www.google.com/books/edition/An_Account_of_the_Farmington_Canal_Compa/ILFLAAAAYAAJ",
+    "pdf": false
+  },
+  {
+    "id": "walter-2016",
+    "section": "maps",
+    "title": "Carl Walter\u2019s Map of the Farmington Canal",
+    "author": "Carl Walter",
+    "year": "2016",
+    "canals": [
+      "Farmington Canal"
+    ],
+    "url": "https://simsburyfreelibrary.org/book-store/farmington-canal-maps/",
+    "pdf": false,
+    "image": "/img/maps/Walter2016-thumb.webp"
+  },
+  {
+    "id": "walter-2006",
+    "section": "maps",
+    "title": "Carl Walter\u2019s Map of the Hampshire & Hampden Canal",
+    "author": "Carl Walter",
+    "year": "2006",
+    "canals": [
+      "Hampshire & Hampden Canal"
+    ],
+    "url": "http://www.historic-northampton.org/products/guides/hampshirecanal.html",
+    "pdf": false,
+    "image": "/img/maps/Walter2006-thumb.webp"
+  },
+  {
+    "id": "farnam-1828",
+    "section": "maps",
+    "title": "Henry Farnam\u2019s Map of the Farmington Canal",
+    "author": "Henry Farnam",
+    "year": "1828",
+    "canals": [
+      "Farmington Canal"
+    ],
+    "url": "https://1828map.farmingtoncanal.info/",
+    "pdf": false,
+    "image": "/img/maps/Farnum1828-thumb.webp"
+  }
+]

@@ -1,0 +1,21 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import MapEmbed from '../components/MapEmbed.astro';
+interface Props {
+  frontmatter: { title: string; description: string; canal: string; mapSection: string };
+}
+const { title, description, canal, mapSection } = Astro.props.frontmatter;
+const mapSrc = `/beta/map/index.html?canal=${mapSection}`;
+---
+<BaseLayout title={title} seoTitle={title} description={description} wide>
+  <article class="prose intro">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Canal map</a><span aria-hidden="true">/</span><span aria-current="page">{canal}</span></nav>
+    <slot />
+  </article>
+  <section class="guide-map" aria-labelledby="canal-map">
+    <h2 id="canal-map">{canal} interactive map</h2>
+    <p>Explore the reconstructed route, lock locations, and Lidar terrain. Click to activate the map, or <a href={mapSrc}>open this section full screen</a>.</p>
+    <MapEmbed src={mapSrc} title={`${canal} route and Lidar map`} />
+    <p class="muted">This experimental map combines surviving terrain traces with historical reconstruction. Read <a href="/about">how the map was made</a> and consult the <a href="/sources">source maps and datasets</a>.</p>
+  </section>
+</BaseLayout>

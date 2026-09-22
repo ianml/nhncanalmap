@@ -1,0 +1,14 @@
+---
+layout: ../../layouts/TownLayout.astro
+title: Simsbury
+description: "Follow the Farmington Canal through Simsbury, Connecticut: Hopmeadow, culverts, passenger boats, and the growth of canal commerce."
+mapView: "41.8701,-72.8050,13"
+---
+
+# Farmington Canal in Simsbury, Connecticut
+
+The canal's route was surveyed and laid out through Simsbury, Connecticut as part of the northern section extending from Farmington to the Massachusetts line. By July 1827, this section was reportedly complete from the Massachusetts line south to Simsbury. Construction in the town involved local contractors, such as Calvin Barber of Simsbury, who was contracted in 1825 to build six culverts, including those for Hop Brook and Grimes Brook. During 1825 and 1826, large quantities of hydraulic lime were delivered to construction sites at the "Simsbury Meeting house" and other locations in the town. The canal's path was "dug through the town from the north to south, passing on the West side of the street at Hopmeadow, as far as the cemetery, where, crossing the street diagonally it was spanned by a high unseemly bridge... interrupting the view and greatly marring the beauty of the Street." This route, which at times ran along a side hill, occasionally suffered small breaches, but they were generally repaired within a few days.
+
+Simsbury became an early hub of activity on the waterway. The canal was declared in operation between New Haven and Simsbury by July 1, 1829, and just two weeks later, sixteen boats were reportedly "constantly plying" that route. Passenger traffic was common. In November 1828, the *Weatogue*, a packet boat owned by John O. Pettibone of Simsbury and named with the Indian name for the town, carried passengers from Simsbury to Farmington and New Haven. Excursions were popular; in July 1829, the *Weatogue* and another Simsbury boat, the *Franklin*, joined two other boats for a trip to the north part of town with large parties of ladies and gentlemen. The canal also served specific community needs, such as a boat being engaged in August 1830 to take passengers to a camp meeting in Simsbury.
+
+The economic impact of the canal on Simsbury was reportedly dramatic. A newspaper article from 1831 stated that before the canal, the town's annual exports were 733 tons, but after the opening, that figure surged to 13,473 tons. This new commerce included the export of heavy materials that were previously difficult to transport. In 1832, 20 tons of copper ore from the Simsbury mine were shipped via the canal. Likewise, an 1829 advertisement offered hewn building stone from a local quarry, noting that the stone would be "deliver[ed]... through the Canal."

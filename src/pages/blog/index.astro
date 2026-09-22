@@ -1,0 +1,6 @@
+---
+import BlogList from '../../layouts/BlogList.astro';
+import { getPosts } from '../../lib/blog';
+const posts = await getPosts();
+---
+<BlogList title="Mapmaking notes" posts={posts} />

@@ -1,0 +1,39 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { townGroups, townPath } from '../data/towns';
+import { routePath } from '../lib/site';
+interface Props { frontmatter: { title: string; description?: string; mapView?: string } }
+const { title, description, mapView } = Astro.props.frontmatter;
+const group = townGroups.find(group => group.towns.includes(title));
+const seoTitle = group ? `${group.canal} in ${title}, ${group.state}` : 'Farmington Canal & Hampshire & Hampden Canal Towns';
+const path = routePath(Astro.url.pathname);
+const towns = townGroups.flatMap(group => group.towns);
+const index = towns.indexOf(title);
+const previous = index > 0 ? towns[index - 1] : undefined;
+const next = index >= 0 ? towns[index + 1] : undefined;
+---
+<BaseLayout title={title} seoTitle={seoTitle} description={description ?? 'Explore the towns along the Farmington Canal in Connecticut and the Hampshire & Hampden Canal in Massachusetts, from New Haven to Northampton.'} wide>
+  <div class="town-layout">
+    <aside class="town-nav">
+      <a class="eyebrow" href="/towns" aria-current={path === '/towns' ? 'page' : undefined}>Canal towns</a>
+      <p class="muted">Follow the canal south to north.</p>
+      <nav aria-label="Canal towns">
+        {townGroups.map(group => (
+          <details open={group.towns.includes(title) || title === 'Towns'}>
+            <summary>{group.state}</summary>
+            <ul>{group.towns.map(town => <li><a href={townPath(town)} aria-current={path === townPath(town) ? 'page' : undefined}>{town}</a></li>)}</ul>
+          </details>
+        ))}
+      </nav>
+    </aside>
+    <div>
+      {group && <nav class="breadcrumb" aria-label="Breadcrumb"><span>{group.canal}</span><span aria-hidden="true">/</span><span aria-current="page">{title}</span></nav>}
+      <article class="prose"><slot /></article>
+      {mapView && <p><a href={`/beta/map/index.html?view=${mapView}`}>View on map <span aria-hidden="true">→</span></a></p>}
+      {(previous || next) && <nav class="town-pagination" aria-label="Along the canal">
+        {previous ? <a href={townPath(previous)}><small>← South</small>{previous}</a> : <span />}
+        {next && <a href={townPath(next)}><small>North →</small>{next}</a>}
+      </nav>}
+    </div>
+  </div>
+</BaseLayout>

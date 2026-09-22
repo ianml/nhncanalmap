@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import sources from '../data/sources.json';
+const mapIds = ['walter-2016', 'walter-2006', 'farnam-1828', 'swca-2023'];
+const maps = mapIds.map(id => sources.find(source => source.id === id)!);
+---
+<BaseLayout title="Sources" description="Historical maps, reports, books, and datasets for the Farmington Canal and Hampshire & Hampden Canal.">
+  <article class="prose">
+    <h1>Sources</h1>
+    <p>Explore the maps, reports, and histories behind the canal map.</p>
+    <p><button class="button-link" data-open-search hidden>Search pages &amp; PDFs</button></p>
+    <noscript><p>Enable JavaScript to search inside the source PDFs, or open a document below.</p></noscript>
+    <h2>Maps</h2>
+    <div class="map-cards">
+      {maps.map(source => <a href={source.url} target="_blank" rel="noopener noreferrer" id={source.id}>
+        <div class="map-card">
+          <img src={source.image} alt={source.title} class="map-card-image" />
+          <div class="map-card-content"><p class="map-card-year">{source.title} ({source.year}){source.pdf && ` (${source.size} PDF)`}</p></div>
+        </div>
+      </a>)}
+    </div>
+    <h2>Data</h2>
+    <ul>
+      <li><a href="https://maps.cteco.uconn.edu/data/lidar/">Connecticut Lidar Data (2023)</a></li>
+      <li><a href="https://www.mass.gov/info-details/massgis-data-lidar-terrain-data">Massachusetts Lidar Data (2021)</a></li>
+      <li><a href="https://maps.cteco.uconn.edu/data/historic1934/">Connecticut Aerial Photography (1934)</a></li>
+    </ul>
+    <h2>Further Reading</h2>
+    <ul>
+      {sources.filter(source => source.section === 'reading').map(source => <li id={source.id}>
+        {source.author && `${source.author}. `}{source.year}. <a href={source.url}>{source.title}</a>.
+        {source.note && ` (${source.note})`}{source.publication && <> <em>{source.publication}</em>.</>}
+      </li>)}
+    </ul>
+    <p class="muted">Search covers the text of the nine linked PDFs, including OCR where needed. Scans and map labels may contain recognition errors. PDF page numbers count from the first page of the file and may differ from printed page numbers. Other links are searchable here by their bibliography entries.</p>
+    <h2>Downloads</h2>
+    <ul><li><a href="https://docs.farmingtoncanal.info/NHandNCanalLines_20251030.geojson">NHandNCanalLines_20251030.geojson</a><br />
+      This work is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</li></ul>
+  </article>
+</BaseLayout>

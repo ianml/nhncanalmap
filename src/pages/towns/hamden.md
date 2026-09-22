@@ -1,0 +1,16 @@
+---
+layout: ../../layouts/TownLayout.astro
+title: Hamden
+description: "Explore the Farmington Canal in Hamden, Connecticut, including its locks, sandy canal bed, water-supply problems, and passenger traffic."
+mapView: "41.3989,-72.8979,13"
+---
+
+# Farmington Canal in Hamden, Connecticut
+
+The town of Hamden was a significant section of the Farmington Canal, featuring numerous locks and specific geographical challenges. In February 1826, proposals were sought at Bradley's Inn in Hamden for the construction of the canal segment running from Cheshire to the New Haven line. Hamden was designated to have five of the canal's 14 lock houses, with proposals for their construction sought in February 1829. The canal route through the town, particularly the "Hamden Plains," was surveyed in October 1823. This area proved to be one of the canal's greatest difficulties due to its porous, sandy soil, which absorbed water rapidly, making it difficult to keep the canal filled during its early operations in 1828 and 1829.
+
+Eight locks were located in Hamden. Lock 18, known as the "Goodyear lock" or "Goodhue lock", was located near Centerville and situated opposite the Goodyear House, a tavern on the Cheshire Turnpike. In March 1834, a lock in Hamden was entirely replaced and the "long level" was deepened to address the water deficiency problems that had previously plagued the area.
+
+In August 1835, a new steamboat built by inventor Benjamin Dutton Beecher called *Experiment* was scheduled to depart from Goodyear's Hotel in Hamden for a trip to Northampton. The canal was also a part of daily life for residents; children attending the "Lighthouse" school on Hamden Plains often enjoyed rides on the boats to and from school.
+
+The Hamden section also saw its share of accidents and calamities. In November 1835, a fatal accident occurred when Mr. Milo Tuttle was thrown from his wagon and killed after the harness broke while he was driving down the canal embankment near the Episcopal Church. In May 1841, the canal boat *Judge Hinckley* sank at the "Goodhue locks" (Lock 18) after water was let in too quickly, causing the boat to be driven against the gates and break apart. Breaches were also reported in Hamden, including one in 1837 near the meeting house and another during the severe floods of October 1843. Additionally, in February 1842, the unoccupied Goodyear House tavern, a canal landmark, was destroyed by a fire believed to be the work of an incendiary.

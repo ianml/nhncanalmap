@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import Search from '../components/Search.astro';
+import { routePath, sitePath } from '../lib/site';
+
+interface Props {
+  title: string;
+  seoTitle?: string;
+  description?: string;
+  wide?: boolean;
+}
+const {
+  title,
+  seoTitle,
+  description = 'Explore the New Haven and Northampton Canal through historic maps, Lidar imagery, and the stories of its towns.',
+  wide = false,
+} = Astro.props;
+const path = routePath(Astro.url.pathname);
+const links = [
+  ['/', 'Map'], ['/about', 'About'],
+  ['/sources', 'Sources'], ['/towns', 'Towns'], ['/beta', 'Beta'],
+];
+const active = (href: string) => href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <title>{seoTitle ?? `${title} | Map of the New Haven & Northampton Canal`}</title>
+    <link rel="icon" href="/img/favicon.ico" sizes="any" />
+    <link rel="canonical" href={new URL(sitePath(path), Astro.site)} />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('canal-theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="Map of the New Haven & Northampton Canal home">
+          <img src="/img/logo.png" alt="Canal company seal" width="48" height="48" />
+          <span>Map of the New Haven &amp; Northampton Canal<small>Farmington Canal | Hampshire &amp; Hampden Canal</small></span>
+        </a>
+        <nav aria-label="Main navigation">
+          {links.map(([href, label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}
+          <button class="search-trigger" data-open-search type="button" aria-label="Search pages and documents" title="Search pages and documents (⌘K / Ctrl+K)" hidden>
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4 4" /></svg>
+          </button>
+          <button id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" hidden>
+            <svg class="theme-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 13A9 9 0 0 1 11 3.2 9 9 0 1 0 20.8 13Z" /></svg>
+            <svg class="theme-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" /></svg>
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main id="main" class:list={['page', { wide }]} tabindex="-1"><slot /></main>
+    <footer class="site-footer">
+      <span>© {new Date().getFullYear()} <a href="mailto:ilancaster+canal@gmail.com">Ian Lancaster</a></span>
+      <a href="/sources">Sources &amp; map data</a>
+    </footer>
+    <Search />
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('#theme-toggle');
+      const preferred = matchMedia('(prefers-color-scheme: dark)');
+      const isDark = () => (document.documentElement.dataset.theme ?? (preferred.matches ? 'dark' : 'light')) === 'dark';
+      function updateButton() {
+        const dark = isDark();
+        const label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        button?.setAttribute('aria-label', label);
+        button?.setAttribute('title', label);
+        button?.setAttribute('data-dark', String(dark));
+      }
+      if (button) {
+        button.hidden = false;
+        updateButton();
+        button.addEventListener('click', () => {
+          const theme = isDark() ? 'light' : 'dark';
+          document.documentElement.dataset.theme = theme;
+          try { localStorage.setItem('canal-theme', theme); } catch {}
+          updateButton();
+        });
+        preferred.addEventListener('change', updateButton);
+      }
+    </script>
+  </body>
+</html>

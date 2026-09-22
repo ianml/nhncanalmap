@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import { postPath, formatDate } from '../lib/blog';
+interface Props { title: string; posts: CollectionEntry<'blog'>[]; description?: string }
+const { title, posts, description = 'Notes on constructing the New Haven and Northampton Canal map.' } = Astro.props;
+---
+<BaseLayout title={title} description={description}>
+  <div class="prose">
+    <h1>{title}</h1>
+    <ul class="post-list">
+      {posts.map(post => <li>
+        <a href={postPath(post)}>{post.data.title}</a>
+        <time class="muted" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+      </li>)}
+    </ul>
+  </div>
+</BaseLayout>

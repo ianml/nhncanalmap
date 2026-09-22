@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Map" seoTitle="Farmington Canal & Hampshire & Hampden Canal Map" description="Explore the historic Farmington Canal and Hampshire & Hampden Canal with an interactive map, Lidar imagery, town histories, and surviving canal features." wide>
+  <script slot="head" is:inline type="module" src="https://js.arcgis.com/embeddable-components/4.32/arcgis-embeddable-components.esm.js"></script>
+  <figure class="hero-image">
+    <a href="/img/maps/Aqueduct-Hillside.png"><img src="/img/maps/Aqueduct-Hillside.png" alt="Farmington River aqueduct and feeder canal" fetchpriority="high" /></a>
+    <figcaption>Farmington River aqueduct and feeder canal</figcaption>
+  </figure>
+  <div class="prose intro">
+    <h1>Map of the New Haven &amp; Northampton Canal</h1>
+    <p class="lead">Farmington Canal | Hampshire &amp; Hampden Canal</p>
+    <p>Trace the historic canal from New Haven, Connecticut, to Northampton, Massachusetts, and explore what remains today. <a href="/about">How the map was made</a>.</p>
+  </div>
+  <nav class="external-maps" aria-label="External maps">
+    <span>Open the map</span>
+    <a class="button-link" href="https://www.arcgis.com/apps/mapviewer/index.html?webmap=3938e2b4321d41879d64de09d1238864">ArcGIS Map Viewer <span aria-hidden="true">↗</span></a>
+    <a class="button-link" href="https://www.google.com/maps/d/edit?mid=1Nmc9hdgXUj_rYjzSdlo672LayyNMGZw&usp=sharing">Google My Maps <span aria-hidden="true">↗</span></a>
+  </nav>
+  <div class="map-frame arcgis-frame" aria-label="Interactive canal map">
+    <arcgis-embedded-map
+      item-id="3938e2b4321d41879d64de09d1238864"
+      theme="dark"
+      bookmarks-enabled
+      heading-enabled
+      legend-enabled
+      information-enabled
+      share-enabled
+      portal-url="https://www.arcgis.com"
+    ></arcgis-embedded-map>
+  </div>
+  <noscript><p>The interactive map requires JavaScript. Use the external map links above to view it.</p></noscript>
+  <div class="prose intro">
+    <aside class="callout"><strong>A work in progress.</strong> Data is currently available as vector lines and points of interest, including feeder canals. It does not account for dimensions of the canal, basins, or sections.</aside>
+  </div>
+</BaseLayout>
+<style>
+  .external-maps { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin: 2rem 0 1rem; }
+  .external-maps > span { font-weight: 600; margin-right: .25rem; }
+  .external-maps .button-link { border-color: var(--accent); padding: .65rem 1rem; font-weight: 600; }
+  .external-maps .button-link:hover { background: var(--accent); color: var(--bg); }
+  @media (max-width: 480px) {
+    .external-maps > span { flex-basis: 100%; }
+  }
+</style>

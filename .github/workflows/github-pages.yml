@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages (optional)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: actions/configure-pages@v5
+        id: pages
+      - run: npm ci
+      - run: npm run check
+      - name: Build and verify GitHub Pages
+        run: npm run test:github
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          SITE_BASE: ${{ steps.pages.outputs.base_path || '/' }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-github
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v5
+        id: deployment

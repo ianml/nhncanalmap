@@ -1,0 +1,20 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postPath, formatDate } from '../lib/blog';
+
+export async function getStaticPaths() {
+  return (await getPosts()).map(post => ({ params: { slug: postPath(post).slice(1) }, props: { post } }));
+}
+interface Props { post: CollectionEntry<'blog'> }
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="prose">
+    <a class="eyebrow" href="/blog">Mapmaking notes</a>
+    <h1>{post.data.title}</h1>
+    <p class="muted"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></p>
+    <Content />
+  </article>
+</BaseLayout>

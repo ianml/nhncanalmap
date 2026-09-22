@@ -1,0 +1,8 @@
+/map / 301
+/map/ / 301
+/blog/building-the-canal-map /about 301
+/blog/archive /blog 301
+/blog/archive/ /blog 301
+/blog/tags /blog 301
+/blog/tags/ /blog 301
+/blog/tags/* /blog 301
