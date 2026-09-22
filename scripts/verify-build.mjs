@@ -118,5 +118,5 @@ for (const route of ['/farmington-canal', '/hampshire-and-hampden-canal']) {
 }
 assert(!await exists(join(dist, 'blog/downloading-dems/index.html')), 'Draft post must remain unpublished');
 assert((await readFile(join(dist, 'robots.txt'), 'utf8')).includes(`Sitemap: ${absolute('/sitemap-index.xml')}`));
-assert(home.includes('<title>Farmington Canal &amp; Hampshire &amp; Hampden Canal Map</title>'), 'Missing homepage SEO title');
+assert(home.includes('<title>Map of the New Haven &amp; Northampton Canal</title>'), 'Missing homepage SEO title');
 console.log(`Verified ${htmlFiles.length} HTML files, ${checkedLinks} local links, ${sitemapUrls.length} canonical sitemap URLs, town content, redirects, and all beta map assets.`);
